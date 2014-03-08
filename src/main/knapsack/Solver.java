@@ -87,7 +87,7 @@ public class Solver {
 		}
 
 		// prepare the solution in the specified output format
-		System.out.println(value + " 0");
+		System.out.println(value + " 1");
 		for (int i = 0; i < items; i++) {
 			System.out.print(taken[i] + " ");
 		}
@@ -98,7 +98,7 @@ public class Solver {
 
 	private static void solveWithStrategy(int capacity, int[] values, int[] weights, int[] taken) {
 		if (strategy == null) {
-			strategy = new SimpleGreedy();
+			strategy = new DynamicProgramming();
 		}
 		strategy.solve(capacity, values, weights, taken);
 		strategy = null;
