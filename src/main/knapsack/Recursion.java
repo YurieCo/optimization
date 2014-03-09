@@ -16,29 +16,29 @@ public class Recursion implements Strategy {
 		this.values = values;
 		this.weights = weights;
 		
-		Tuple<Integer, int[]> ret = solve(cap, values.length, new int[values.length], 0);
+		Tuple<Integer, Cons> ret = solve(cap, values.length);
 		
-		for (int i : ret.snd) {
-			taken[i] = 1;
+		Cons path = ret.snd;
+		while (path != null) {
+			taken[path.car] = 1;
+			path = path.cdr;
 		}
 	}
 
 	// the best path is constructed using accumulator parameter (path), which
 	// will be returned on the base cases
-	Tuple<Integer, int[]> solve(int cap, int n, int[] path, int pi) {
+	Tuple<Integer, Cons> solve(int cap, int n) {
 		if (cap == 0 || n == 0) { // no more space or no more item
-			int[] rpath = new int[pi];
-			System.arraycopy(path, 0, rpath, 0, pi);
-			return Tuple.make(0, rpath);
+			return Tuple.make(0, null);
 		} else {
-			Tuple<Integer, int[]> ret = solve(cap, n - 1, path, pi);
+			Tuple<Integer, Cons> ret = solve(cap, n - 1);
 			int max = ret.fst;
 			if (weights[n - 1] <= cap) { // we can afford this
-				path[pi] = n - 1;
-				Tuple<Integer, int[]> ret2 = solve(cap - weights[n - 1], n - 1, path, pi + 1);
+				Tuple<Integer, Cons> ret2 = solve(cap - weights[n - 1], n - 1);
 				int max2 = values[n - 1] + ret2.fst;
 				if (max2 > max) {
-					return Tuple.make(max2, ret2.snd);
+					Cons path = new Cons(n - 1, ret2.snd);
+					return Tuple.make(max2, path);
 				}
 			}
 			return ret;

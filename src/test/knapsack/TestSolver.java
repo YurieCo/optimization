@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,7 +28,6 @@ public class TestSolver {
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		
-		
 		File metadata = new File(DIR, "_metadata");
 		Scanner sc = new Scanner(metadata);
 		sc.nextLine();
@@ -43,6 +44,13 @@ public class TestSolver {
 		for (File file : sampleDir.listFiles()) {
 			exampleTests.add(file);
 		}
+		// sort by size ascending
+		Collections.sort(exampleTests, new Comparator<File>() {
+			@Override
+			public int compare(File f1, File f2) {
+				return Long.signum(f1.length() - f2.length());
+			}
+		});
 		
 	}
 	
@@ -57,9 +65,28 @@ public class TestSolver {
 	}
 	
 	@Test
-	public void testExample_4_0() throws Exception {
-		Solver.strategy = new DynamicProgramming();
+	public void testRecursion() throws Exception {
 		String test = getInput("ks_4_0");
+		
+		Solver.strategy = new Recursion();
+		int value = solve(test);
+		assertTrue(value >= 19);
+	}
+	
+	@Test
+	public void testDynamicProgramming() throws Exception {
+		String test = getInput("ks_4_0");
+
+		Solver.strategy = new DynamicProgramming();
+		int value = solve(test);
+		assertTrue(value >= 19);
+	}	
+	
+	@Test
+	public void testMemoization() throws Exception {
+		String test = getInput("ks_4_0");
+
+		Solver.strategy = new Memoization();
 		int value = solve(test);
 		assertTrue(value >= 19);
 	}
@@ -92,7 +119,18 @@ public class TestSolver {
 		for (File file : provisionalTests) {
 			String test = file.getAbsolutePath();
 			System.out.println(test);
-			Solver.strategy = new Recursion();
+			Solver.strategy = new DynamicProgramming();
+			int value = Solver.solve(new String[]{ "-file=" + test });
+			System.out.println(value);
+		}
+	}
+	
+	@Test
+	public void testAllExamples() throws Exception {
+		for (File file : exampleTests) {
+			String test = file.getAbsolutePath();
+			System.out.println(test);
+			Solver.strategy = new DynamicProgramming();
 			int value = Solver.solve(new String[]{ "-file=" + test });
 			System.out.println(value);
 		}

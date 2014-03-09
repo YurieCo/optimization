@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import knapsack.SimpleGreedy;
-
 /**
  * The class <code>Solver</code> is an implementation of a greedy algorithm to
  * solve the knapsack problem.
