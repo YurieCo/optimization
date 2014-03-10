@@ -96,7 +96,7 @@ public class Solver {
 
 	private static void solveWithStrategy(int capacity, int[] values, int[] weights, int[] taken) {
 		if (strategy == null) {
-			strategy = new DynamicProgramming();
+			strategy = new DiskBackedDynamicProgramming();
 		}
 		strategy.solve(capacity, values, weights, taken);
 		strategy = null;

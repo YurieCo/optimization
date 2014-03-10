@@ -17,8 +17,8 @@ import org.junit.rules.Timeout;
 
 public class TestSolver {
 	
-	@Rule
-	public Timeout globalTimeout = new Timeout(30000); // 10 seconds max per method tested
+//	@Rule
+//	public Timeout globalTimeout = new Timeout(30000); // 10 seconds max per method tested
 
 	private static String DIR = "C:/Users/monang/Documents/coursera/Discrete Optimization/knapsack";
 
@@ -74,15 +74,6 @@ public class TestSolver {
 	}
 	
 	@Test
-	public void testDynamicProgramming() throws Exception {
-		String test = getInput("ks_4_0");
-
-		Solver.strategy = new DynamicProgramming();
-		int value = solve(test);
-		assertTrue(value >= 19);
-	}	
-	
-	@Test
 	public void testMemoization() throws Exception {
 		String test = getInput("ks_4_0");
 
@@ -91,10 +82,27 @@ public class TestSolver {
 		assertTrue(value >= 19);
 	}
 
+	@Test
+	public void testSpaceEfficientDynamicProgramming() throws Exception {
+		String test = getInput("ks_4_0");
+
+		Solver.strategy = new SpaceEfficientDynamicProgramming();
+		int value = solve(test);
+		assertTrue(value >= 19);
+	}
+	
+	@Test
+	public void testDiskBasedDynamicProgramming() throws Exception {
+		String test = getInput("ks_4_0");
+
+		Solver.strategy = new DiskBackedDynamicProgramming();
+		int value = solve(test);
+		assertTrue(value >= 19);
+	}	
 	
 	@Test
 	public void testSubmit1() throws Exception {
-		Solver.strategy = new Recursion(); //
+		Solver.strategy = new Recursion();
 		String test = provisionalTests.get(0).getAbsolutePath();
 		int value = solve(test);
 		assertTrue(value >= 99798);
@@ -105,13 +113,39 @@ public class TestSolver {
 	public void testSubmit2() throws Exception {
 		String test = provisionalTests.get(1).getAbsolutePath();
 
-		Solver.strategy = new DynamicProgramming();
-		int value2 = solve(test);
-		assertTrue(value2 >= 141956);
-		
 		Solver.strategy = new Memoization();
 		int value1 = solve(test);
 		assertTrue(value1 >= 141956);
+		Solver.strategy = new DiskBackedDynamicProgramming();
+		int value2 = solve(test);
+
+	}
+	
+	@Test
+	public void testSubmit3() throws Exception {
+		String test = provisionalTests.get(2).getAbsolutePath();
+
+		Solver.strategy = new DynamicProgramming();
+		int value2 = solve(test);
+		assertTrue(value2 >= 100236);
+	}
+	
+	@Test
+	public void testSubmit4() throws Exception {
+		String test = provisionalTests.get(3).getAbsolutePath();
+
+		Solver.strategy = new DiskBackedDynamicProgramming();
+		int value2 = solve(test);
+		assertTrue(value2 >= 3967180);
+	}
+	
+	@Test
+	public void testSubmit5() throws Exception {
+		String test = provisionalTests.get(4).getAbsolutePath();
+
+		Solver.strategy = new DiskBackedDynamicProgramming();
+		int value2 = solve(test);
+		assertTrue(value2 >= 109899);
 	}
 	
 	@Test

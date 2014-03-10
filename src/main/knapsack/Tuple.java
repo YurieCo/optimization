@@ -12,5 +12,5 @@ public class Tuple<T1, T2> {
 		this.fst = fst;
 		this.snd = snd;
 	}
-
+	
 }
