@@ -1,13 +1,13 @@
 package knapsack;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
  * DP using less space. The idea is to use 2 arrays to track previous and
- * current score, and a set for backtracking. The set contains pairs of item
- * number and capacity, which denote the states of when we pick the item.
+ * current score, and a list of list of range for backtracking.
  * 
  * An even more space efficient solution would be to use single array and
  * filling the score from bottom to the top, but this is less intuitive.
@@ -18,7 +18,7 @@ public class SpaceEfficientDynamicProgramming implements Strategy {
 	int[] values, weights;
 	int C;
 	int[][] dp;
-	Set<State> dir;
+	List<List<Range>> dir;
 
 	@Override
 	public void solve(int cap, int[] values, int[] weights, int[] taken) {
@@ -27,7 +27,11 @@ public class SpaceEfficientDynamicProgramming implements Strategy {
 		this.weights = weights;
 		this.C = cap;
 		this.dp = new int[2][cap + 1];
-		this.dir = new HashSet<State>();
+		this.dir = new ArrayList<List<Range>>(values.length + 1);
+		for (int i = 0; i < values.length + 1; i++) {
+			dir.add(new ArrayList<Range>());
+		}
+
 		
 		Tuple<Integer, int[]> ret = solve();
 		
@@ -49,27 +53,57 @@ public class SpaceEfficientDynamicProgramming implements Strategy {
 		
 		// fill the table
 		for (int n = 1; n < values.length + 1; n++) {
-			System.out.println(n);
+
 			int currentRow = n % 2;
 			int prevRow = (n - 1) % 2;
 			for (int cap = 1; cap < dp[0].length; cap++) {
 				int max = dp[prevRow][cap]; // we don't pick current item
 				if(weights[n - 1] <= cap) { // we can afford this item
 					int tmax = values[n - 1] + dp[prevRow][cap - weights[n - 1]]; // we pick current item
-					max = Math.max(max, tmax);
-					dir.add(new State(n, cap));
+					if(tmax > max) {
+						max = tmax;
+						
+						List<Range> list = dir.get(n);
+						boolean addNew = true;
+						if (!list.isEmpty()) {
+							Range last = list.get(list.size() - 1);
+							if (last.cap + last.count == cap) {
+								last.count++;
+								addNew = false;
+							}
+						}
+						if(addNew) {
+							Range last = new Range(cap);
+							list.add(last);
+						}
+						
+					}
+					
+
 				}
 				dp[currentRow][cap] = max;
 			}
 		}
-		
 		
 		// backtrack, start at lower right corner
 		int cap = C;
 		int[] path = new int[values.length];
 		int pi = 0;
 		for (int n = values.length; n > 0; n--) {
-			if(dir.contains(new State(n, cap))){ // we picked this item
+			List<Range> list = dir.get(n);
+			Iterator<Range> iter = list.iterator();
+			boolean stop = false;
+			boolean found = false;
+			while (iter.hasNext() && !stop) {
+				Range current = iter.next();
+				if (cap < current.cap) {
+					stop = true;
+				} else if (current.cap <= cap && cap < current.cap + current.count) {
+					stop = true;
+					found = true;
+				}
+			}
+			if (found) { // we picked this item
 				path[pi++] = n - 1;
 				cap -= weights[n - 1];
 			}
@@ -82,35 +116,17 @@ public class SpaceEfficientDynamicProgramming implements Strategy {
 	}
 }
 
-class State {
-	final int n;
+class Range {
 	final int cap;
-	public State(int n, int cap) {
-		this.n = n;
+	int count;
+	public Range(int cap) {
 		this.cap = cap;
+		this.count = 1;
 	}
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + cap;
-		result = prime * result + n;
-		return result;
+	public String toString() {
+		return "(" + cap +", " + count + ")";
 	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		State other = (State) obj;
-		if (cap != other.cap)
-			return false;
-		if (n != other.n)
-			return false;
-		return true;
-	}
+	
 	
 }

@@ -29,7 +29,7 @@ public class DiskBackedDynamicProgramming implements Strategy {
 		
 		try {
 			Tuple<Integer, int[]> ret = solve();
-			System.out.println(ret.fst);
+
 			for (int i : ret.snd) {
 				taken[i] = 1;
 			}
@@ -61,8 +61,10 @@ public class DiskBackedDynamicProgramming implements Strategy {
 				int max = dp[prevRow][cap]; // we don't pick current item
 				if(weights[n - 1] <= cap) { // we can afford this item
 					int tmax = values[n - 1] + dp[prevRow][cap - weights[n - 1]]; // we pick current item
-					max = Math.max(max, tmax);
-					dir.set(cap);
+					if (tmax > max) {
+						max = tmax;
+						dir.set(cap);
+					}
 				}
 				dp[currentRow][cap] = max;
 			}

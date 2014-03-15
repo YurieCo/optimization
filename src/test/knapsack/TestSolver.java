@@ -102,7 +102,7 @@ public class TestSolver {
 	
 	@Test
 	public void testSubmit1() throws Exception {
-		Solver.strategy = new Recursion();
+		Solver.strategy = new Memoization();
 		String test = provisionalTests.get(0).getAbsolutePath();
 		int value = solve(test);
 		assertTrue(value >= 99798);
@@ -113,11 +113,9 @@ public class TestSolver {
 	public void testSubmit2() throws Exception {
 		String test = provisionalTests.get(1).getAbsolutePath();
 
-		Solver.strategy = new Memoization();
+		Solver.strategy = new SpaceEfficientDynamicProgramming();
 		int value1 = solve(test);
 		assertTrue(value1 >= 141956);
-		Solver.strategy = new DiskBackedDynamicProgramming();
-		int value2 = solve(test);
 
 	}
 	
@@ -134,7 +132,7 @@ public class TestSolver {
 	public void testSubmit4() throws Exception {
 		String test = provisionalTests.get(3).getAbsolutePath();
 
-		Solver.strategy = new DiskBackedDynamicProgramming();
+		Solver.strategy = new SpaceEfficientDynamicProgramming();
 		int value2 = solve(test);
 		assertTrue(value2 >= 3967180);
 	}
@@ -143,9 +141,18 @@ public class TestSolver {
 	public void testSubmit5() throws Exception {
 		String test = provisionalTests.get(4).getAbsolutePath();
 
-		Solver.strategy = new DiskBackedDynamicProgramming();
+		Solver.strategy = new SpaceEfficientDynamicProgramming();
 		int value2 = solve(test);
 		assertTrue(value2 >= 109899);
+	}
+	
+	@Test
+	public void testSubmit6() throws Exception {
+		String test = provisionalTests.get(5).getAbsolutePath();
+
+		Solver.strategy = new SpaceEfficientDynamicProgramming();
+		int value2 = solve(test);
+		assertTrue(value2 >= 1099893);
 	}
 	
 	@Test
